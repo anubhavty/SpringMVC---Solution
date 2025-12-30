@@ -3,6 +3,7 @@ package com.anubhavtyagi28.springmvc.controllers;
 
 import com.anubhavtyagi28.springmvc.dto.DepartmentDTO;
 import com.anubhavtyagi28.springmvc.entities.DepartmentEntity;
+import com.anubhavtyagi28.springmvc.exceptions.ResourceNotFoundException;
 import com.anubhavtyagi28.springmvc.repositories.DepartmentRepository;
 import com.anubhavtyagi28.springmvc.services.DepartmentService;
 import jakarta.validation.Valid;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.ReadOnlyFileSystemException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,7 +26,7 @@ public class DepartmentController {
    @GetMapping(path = "/{id}")
     public ResponseEntity<DepartmentDTO> getDepartmentById(@PathVariable Long id){
        Optional<DepartmentDTO> departmentDTO = departmentService.getDepartmentById(id);
-        return departmentDTO.map(departmentDTO1 -> ResponseEntity.ok(departmentDTO1)).orElse(ResponseEntity.notFound().build());
+        return departmentDTO.map(departmentDTO1 -> ResponseEntity.ok(departmentDTO1)).orElseThrow(() -> new ResourceNotFoundException("Resource not found with id "+id));
     }
     @GetMapping
     public ResponseEntity<List<DepartmentDTO>> getAllDepartments(@RequestParam(required = false) String title) {

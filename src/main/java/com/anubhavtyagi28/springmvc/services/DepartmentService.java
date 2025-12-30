@@ -2,6 +2,7 @@ package com.anubhavtyagi28.springmvc.services;
 
 import com.anubhavtyagi28.springmvc.dto.DepartmentDTO;
 import com.anubhavtyagi28.springmvc.entities.DepartmentEntity;
+import com.anubhavtyagi28.springmvc.exceptions.ResourceNotFoundException;
 import com.anubhavtyagi28.springmvc.repositories.DepartmentRepository;
 import org.jspecify.annotations.Nullable;
 import org.modelmapper.ModelMapper;
@@ -41,24 +42,20 @@ public class DepartmentService {
     }
 
     public DepartmentDTO updateDepartmentById(Long id, DepartmentDTO departmentDTO) {
+        isExistsByDepartmentId(id);
         DepartmentEntity departmentEntity = modelMapper.map(departmentDTO, DepartmentEntity.class);
         departmentEntity.setId(id);
         DepartmentEntity savedDepartment = departmentRepository.save(departmentEntity);
         return modelMapper.map(savedDepartment, DepartmentDTO.class);
     }
 
-    public boolean isExistsByDepartmentId(Long id) {
-        return departmentRepository.existsById(id);
-    }
     public boolean deleteDepartmentById(Long id) {
-        boolean exists = isExistsByDepartmentId(id);
-        if(!exists) return false;
+        isExistsByDepartmentId(id);
         departmentRepository.deleteById(id);
         return true;
     }
     public DepartmentDTO updatePartialDepartmentById(Long id, Map<String, Object> updates) {
-        boolean exists = isExistsByDepartmentId(id);
-        if(!exists) return null;
+        isExistsByDepartmentId(id);
         DepartmentEntity departmentEntity = departmentRepository.findById(id).get();
         updates.forEach((field, value) -> {
             Field declaredField = ReflectionUtils.findField(DepartmentEntity.class, field);
@@ -67,5 +64,9 @@ public class DepartmentService {
         });
         return modelMapper.map(departmentRepository.save(departmentEntity), DepartmentDTO.class);
 
+    }
+    public void isExistsByDepartmentId(Long id) {
+        boolean exists = departmentRepository.existsById(id);
+        if(!exists) throw new ResourceNotFoundException("Department not found with id "+id);
     }
 }

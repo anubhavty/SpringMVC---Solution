@@ -1,5 +1,7 @@
 package com.anubhavtyagi28.springmvc.dto;
 
+import com.anubhavtyagi28.springmvc.annotations.PrimeNumberValidation;
+import com.anubhavtyagi28.springmvc.annotations.ValidPassword;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -63,7 +65,8 @@ public class DepartmentDTO {
     @DecimalMin(value = "1000.00", message = "monthlyBudget must be at least 1000")
     private BigDecimal monthlyBudget;
 
-    @Range(min = 1, max = 5, message = "departmentRating must be between 1 and 5")
+//    @Range(min = 1, max = 5, message = "departmentRating must be between 1 and 5")
+    @PrimeNumberValidation(message = "Rating must be a prime number")
     private Integer departmentRating;
 
     @URL(message = "departmentWebsite must be a valid URL")
@@ -72,6 +75,9 @@ public class DepartmentDTO {
     @NotBlank(message = "supportEmail is required")
     @Email(message = "supportEmail must be a valid email")
     private String supportEmail;
+    @NotNull
+    @ValidPassword
+    private String password;
 
     @Pattern(
             regexp = "^[0-9]{10}$",

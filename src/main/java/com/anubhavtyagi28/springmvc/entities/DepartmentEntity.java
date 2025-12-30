@@ -63,4 +63,5 @@ public class DepartmentEntity {
     private BigDecimal creditLimit;
 
     private String departmentCardNumber;
+    private String password;
 }
